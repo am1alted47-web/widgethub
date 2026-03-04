@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Play, Pause, SkipForward, SkipBack, Music, AlertCircle, LogOut } from 'lucide-react';
+import { useWorkerInterval } from '../../hooks/useWorkerInterval';
 
 declare global {
   interface Window {
@@ -299,56 +300,58 @@ export default function SpotifyWidget({ blur = 0, isEditing = false, isHidden = 
     }, [token, isPremium]);
 
     // 3. Polling / Fallback (Free Users or Non-Active SDK)
-    useEffect(() => {
+    const pollSpotify = async () => {
         if (!token) return;
-        
-        // Poll if not premium OR if premium but player not active (listening on phone)
         const shouldPoll = isPremium === false || (isPremium === true && !isActive);
-        
         if (!shouldPoll) return;
 
-        const poll = async () => {
-            try {
-                // Modified to request episode data
-                const res = await fetch('https://api.spotify.com/v1/me/player/currently-playing?additional_types=track,episode', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
-                
-                if (res.status === 204 || res.status > 400) {
-                    return; // No content or error
-                }
-
-                const data = await res.json();
-                if (data && data.item) {
-                     let artistName = "";
-                     let albumArt = "";
-                     
-                     if (data.item.type === 'episode') {
-                         artistName = data.item.show?.name || "Podcast";
-                         albumArt = data.item.images?.[0]?.url || data.item.show?.images?.[0]?.url;
-                     } else {
-                         artistName = data.item.artists?.map((a:any) => a.name).join(', ');
-                         albumArt = data.item.album?.images?.[0]?.url;
-                     }
-
-                     setCurrentTrack({
-                        name: data.item.name,
-                        artist: artistName,
-                        albumArt: albumArt,
-                        uri: data.item.uri,
-                        type: data.item.type || 'unknown'
-                    });
-                    setPaused(!data.is_playing);
-                }
-            } catch (e) {
-                console.error("Polling error", e);
+        try {
+            // Modified to request episode data
+            const res = await fetch('https://api.spotify.com/v1/me/player/currently-playing?additional_types=track,episode', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            
+            if (res.status === 204 || res.status > 400) {
+                return; // No content or error
             }
-        };
 
-        poll(); // Immediate
-        const interval = setInterval(poll, 5000); // Every 5s
-        return () => clearInterval(interval);
+            const data = await res.json();
+            if (data && data.item) {
+                 let artistName = "";
+                 let albumArt = "";
+                 
+                 if (data.item.type === 'episode') {
+                     artistName = data.item.show?.name || "Podcast";
+                     albumArt = data.item.images?.[0]?.url || data.item.show?.images?.[0]?.url;
+                 } else {
+                     artistName = data.item.artists?.map((a:any) => a.name).join(', ');
+                     albumArt = data.item.album?.images?.[0]?.url;
+                 }
+
+                 setCurrentTrack({
+                    name: data.item.name,
+                    artist: artistName,
+                    albumArt: albumArt,
+                    uri: data.item.uri,
+                    type: data.item.type || 'unknown'
+                });
+                setPaused(!data.is_playing);
+            }
+        } catch (e) {
+            console.error("Polling error", e);
+        }
+    };
+
+    useEffect(() => {
+        const shouldPoll = token && (isPremium === false || (isPremium === true && !isActive));
+        if (shouldPoll) {
+            pollSpotify();
+        }
     }, [token, isPremium, isActive]);
+
+    useWorkerInterval(() => {
+        pollSpotify();
+    }, (token && (isPremium === false || (isPremium === true && !isActive))) ? 5000 : null);
 
 
     // Controls

@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useRef } from 'react';
 import { Cloud, Sun, CloudRain, CloudSnow, Loader2, MapPin } from 'lucide-react';
+import { useWorkerInterval } from '../../hooks/useWorkerInterval';
 
 interface WeatherData {
   temperature: number;
@@ -60,13 +61,9 @@ export default function WeatherWidget({ blur = 0, settings, onSettingsChange }: 
   }, []);
 
   // Auto-refresh every 30 minutes
-  useEffect(() => {
-      const interval = setInterval(() => {
-          fetchWeather(city);
-      }, 30 * 60 * 1000); // 30 minutes
-
-      return () => clearInterval(interval);
-  }, [city]);
+  useWorkerInterval(() => {
+      fetchWeather(city);
+  }, 30 * 60 * 1000); // 30 minutes
 
   const fetchWeather = async (cityName: string) => {
     setLoading(true);

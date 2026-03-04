@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useWorkerInterval } from '../../hooks/useWorkerInterval';
 
 interface DateWidgetProps {
     blur?: number;
@@ -9,10 +10,9 @@ interface DateWidgetProps {
 export default function DateWidget({ blur = 0 }: DateWidgetProps) {
   const [date, setDate] = useState(new Date());
 
-  useEffect(() => {
-    const timer = setInterval(() => setDate(new Date()), 1000);
-    return () => clearInterval(timer);
-  }, []);
+  useWorkerInterval(() => {
+    setDate(new Date());
+  }, 1000);
 
   return (
     <div 

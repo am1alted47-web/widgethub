@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { Play, Pause, RotateCcw, Monitor, Coffee } from 'lucide-react';
+import { useWorkerInterval } from '../../hooks/useWorkerInterval';
 
 interface PomodoroWidgetProps {
     blur?: number;
@@ -13,14 +14,12 @@ export default function PomodoroWidget({ blur = 0 }: PomodoroWidgetProps) {
   const [mode, setMode] = useState<'work' | 'break'>('work');
   const [isAnimedoro, setIsAnimedoro] = useState(false);
 
-  useEffect(() => {
-    let interval: NodeJS.Timeout;
+  useWorkerInterval(() => {
+    setTimeLeft((prev) => prev - 1);
+  }, isActive && timeLeft > 0 ? 1000 : null);
 
-    if (isActive && timeLeft > 0) {
-      interval = setInterval(() => {
-        setTimeLeft((prev) => prev - 1);
-      }, 1000);
-    } else if (timeLeft === 0 && isActive) {
+  useEffect(() => {
+    if (timeLeft === 0 && isActive) {
       // Play audio
       const audio = new Audio('/timer_end.mp3');
       audio.play().catch((e) => console.error('Error playing audio:', e));
@@ -36,9 +35,7 @@ export default function PomodoroWidget({ blur = 0 }: PomodoroWidgetProps) {
           setTimeLeft(nextMode === 'work' ? 25 * 60 : 5 * 60);
       }
     }
-
-    return () => clearInterval(interval);
-  }, [isActive, timeLeft]);
+  }, [isActive, timeLeft, mode, isAnimedoro]);
 
   const toggleTimer = () => setIsActive(!isActive);
 
@@ -80,6 +77,24 @@ export default function PomodoroWidget({ blur = 0 }: PomodoroWidgetProps) {
     const secs = seconds % 60;
     return `${mins.toString()}:${secs.toString().padStart(2, '0')}`;
   };
+
+  useEffect(() => {
+    const updateTitle = () => {
+      if (document.hidden && isActive) {
+        document.title = `${formatTime(timeLeft)} - WidgetHub`;
+      } else {
+        document.title = 'WidgetHub';
+      }
+    };
+
+    updateTitle();
+
+    document.addEventListener('visibilitychange', updateTitle);
+    return () => {
+      document.removeEventListener('visibilitychange', updateTitle);
+      document.title = 'WidgetHub';
+    };
+  }, [isActive, timeLeft]);
 
   return (
     <div 

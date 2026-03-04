@@ -15,9 +15,11 @@ interface ControlsProps {
   background: AppState['background'];
   wakeLock?: boolean;
   onToggleWakeLock: () => void;
+  activePage: 'page1' | 'page2';
+  onTogglePage: () => void;
 }
 
-export function Controls({ isEditing, disableEdit, onToggleEdit, onAddWidget, onExport, onImport, onUpdateBlur, blur, onUpdateBackground, background, wakeLock = false, onToggleWakeLock }: ControlsProps) {
+export function Controls({ isEditing, disableEdit, onToggleEdit, onAddWidget, onExport, onImport, onUpdateBlur, blur, onUpdateBackground, background, wakeLock = false, onToggleWakeLock, activePage, onTogglePage }: ControlsProps) {
   const [showBgModal, setShowBgModal] = useState(false);
   const [showAddMenu, setShowAddMenu] = useState(false);
   const [showControls, setShowControls] = useState(false);
@@ -141,6 +143,14 @@ export function Controls({ isEditing, disableEdit, onToggleEdit, onAddWidget, on
                 title={wakeLock ? "Keep Screen Awake (On)" : "Keep Screen Awake (Off)"}
               >
                 {wakeLock ? <Zap className="text-black fill-black" size={16} /> : <ZapOff className="text-white" size={16} />}
+              </button>
+
+              <button
+                onClick={onTogglePage}
+                className="p-4 rounded-full shadow-lg transition-all transform hover:scale-105 bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center min-w-[48px] min-h-[48px]"
+                title={`Switch to Page ${activePage === 'page1' ? '2' : '1'}`}
+              >
+                <span className="text-white text-sm font-bold leading-none">{activePage === 'page1' ? '1' : '2'}</span>
               </button>
 
               <button

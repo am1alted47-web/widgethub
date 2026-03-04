@@ -40,8 +40,18 @@ const INITIAL_STATE: AppState = {
 
 export default function Home() {
   const [activeId, setActiveId] = useState<string | null>(null);
-  const [state, setState] = useState<AppState>(INITIAL_STATE);
+  type PageId = 'page1' | 'page2';
+  const [pageStates, setPageStates] = useState<Record<PageId, AppState>>({ page1: INITIAL_STATE, page2: INITIAL_STATE });
+  const [activePage, setActivePage] = useState<PageId>('page1');
   const [mounted, setMounted] = useState(false); 
+
+  const state = pageStates[activePage];
+  const setState = (updater: AppState | ((prev: AppState) => AppState)) => {
+    setPageStates(prev => {
+      const nextState = typeof updater === 'function' ? updater(prev[activePage]) : updater;
+      return { ...prev, [activePage]: nextState };
+    });
+  };
 
   useEffect(() => {
     setMounted(true);
@@ -49,17 +59,26 @@ export default function Home() {
     if (saved) {
       try {
         const loadedState = JSON.parse(saved);
-        // Safely merge with defaults to handle new properties (like columnWidths)
-        setState({
-             ...INITIAL_STATE,
-             ...loadedState,
-             columnWidths: loadedState.columnWidths || INITIAL_STATE.columnWidths,
-             wakeLock: loadedState.wakeLock !== undefined ? loadedState.wakeLock : INITIAL_STATE.wakeLock,
-             background: {
-                 ...INITIAL_STATE.background,
-                 ...loadedState.background
-             }
-        });
+        if (loadedState.pages) {
+          const p1 = { ...INITIAL_STATE, ...loadedState.pages.page1, columnWidths: loadedState.pages.page1?.columnWidths || INITIAL_STATE.columnWidths, background: { ...INITIAL_STATE.background, ...loadedState.pages.page1?.background }, wakeLock: loadedState.pages.page1?.wakeLock !== undefined ? loadedState.pages.page1.wakeLock : INITIAL_STATE.wakeLock };
+          const p2 = { ...INITIAL_STATE, ...loadedState.pages.page2, columnWidths: loadedState.pages.page2?.columnWidths || INITIAL_STATE.columnWidths, background: { ...INITIAL_STATE.background, ...loadedState.pages.page2?.background }, wakeLock: loadedState.pages.page2?.wakeLock !== undefined ? loadedState.pages.page2.wakeLock : INITIAL_STATE.wakeLock };
+          setPageStates({ page1: p1, page2: p2 });
+          setActivePage(loadedState.activePage || 'page1');
+        } else {
+          // Safely merge with defaults to handle new properties
+          const migratedState = {
+               ...INITIAL_STATE,
+               ...loadedState,
+               columnWidths: loadedState.columnWidths || INITIAL_STATE.columnWidths,
+               wakeLock: loadedState.wakeLock !== undefined ? loadedState.wakeLock : INITIAL_STATE.wakeLock,
+               background: {
+                   ...INITIAL_STATE.background,
+                   ...loadedState.background
+               }
+          };
+          setPageStates({ page1: migratedState, page2: INITIAL_STATE });
+          setActivePage('page1');
+        }
       } catch (e) {
         console.error('Failed to load state', e);
       }
@@ -68,9 +87,12 @@ export default function Home() {
 
   useEffect(() => {
     if (mounted) {
-      localStorage.setItem('widgethub-config', JSON.stringify(state));
+      localStorage.setItem('widgethub-config', JSON.stringify({
+        pages: pageStates,
+        activePage
+      }));
     }
-  }, [state, mounted]);
+  }, [pageStates, activePage, mounted]);
 
   useEffect(() => {
     let wakeLockSentinel: any = null;
@@ -352,7 +374,7 @@ export default function Home() {
   };
 
   const exportConfig = () => {
-      const blob = new Blob([JSON.stringify(state)], { type: 'application/json' });
+      const blob = new Blob([JSON.stringify({ pages: pageStates, activePage })], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
@@ -368,8 +390,13 @@ export default function Home() {
       reader.onload = (event) => {
           try {
               const config = JSON.parse(event.target?.result as string);
-              // Basic validation could be improved
-              if (config.columns && config.background) {
+              if (config.pages) {
+                  setPageStates({
+                      page1: { ...INITIAL_STATE, ...config.pages.page1, columnWidths: config.pages.page1?.columnWidths || INITIAL_STATE.columnWidths, background: { ...INITIAL_STATE.background, ...config.pages.page1?.background } },
+                      page2: { ...INITIAL_STATE, ...config.pages.page2, columnWidths: config.pages.page2?.columnWidths || INITIAL_STATE.columnWidths, background: { ...INITIAL_STATE.background, ...config.pages.page2?.background } }
+                  });
+                  if (config.activePage) setActivePage(config.activePage);
+              } else if (config.columns && config.background) {
                   setState(config);
               }
           } catch (error) {
@@ -492,6 +519,8 @@ export default function Home() {
             blur={state.blur !== undefined ? state.blur : 10}
             wakeLock={state.wakeLock}
             onToggleWakeLock={toggleWakeLock}
+            activePage={activePage}
+            onTogglePage={() => setActivePage(prev => prev === 'page1' ? 'page2' : 'page1')}
         />
 
       </main>
