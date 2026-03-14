@@ -98,7 +98,7 @@ export default function PomodoroWidget({ blur = 0 }: PomodoroWidgetProps) {
 
   return (
     <div 
-        className="flex flex-col items-center justify-center h-full w-full rounded-2xl p-4 text-white  relative overflow-hidden transition-colors duration-300"
+        className="flex flex-col items-center justify-center h-full w-full rounded-2xl p-4 relative overflow-hidden transition-colors duration-300"
         style={{ 
             backdropFilter: `blur(${blur}px)`,
             backgroundColor: `rgba(0, 0, 0, 0)`
@@ -108,7 +108,7 @@ export default function PomodoroWidget({ blur = 0 }: PomodoroWidgetProps) {
       <div className="absolute top-2 right-2">
           <button 
             onClick={toggleAnimedoro}
-            className={`text-[10px] px-2 py-1 rounded-full border transition ${isAnimedoro ? 'bg-pink-500/20 border-pink-500 text-pink-200' : 'bg-white/10 border-white/20 text-white/50'}`}
+            className={`text-[10px] px-2 py-1 rounded-full border transition ${isAnimedoro ? 'bg-pink-500/20 border-pink-500 text-pink-200' : 'bg-white/10 border-white/20 opacity-50'}`}
             title="Toggle Animedoro (40m/20m)"
           >
               {isAnimedoro ? 'LONG' : 'SHORT'}
@@ -118,13 +118,13 @@ export default function PomodoroWidget({ blur = 0 }: PomodoroWidgetProps) {
       <div className="flex gap-2 mb-4 bg-white/10 p-1 rounded-lg">
         <button 
           onClick={() => switchMode('work')}
-          className={`px-3 py-1 rounded text-sm font-medium transition flex items-center gap-1 ${mode === 'work' ? 'bg-red-500 text-white' : 'text-white/50 hover:text-white'}`}
+          className={`px-3 py-1 rounded text-sm font-medium transition flex items-center gap-1 ${mode === 'work' ? 'bg-red-500 text-white' : 'opacity-50 hover:opacity-100'}`}
         >
           <Monitor size={14} /> Work
         </button>
         <button 
           onClick={() => switchMode('break')}
-          className={`px-3 py-1 rounded text-sm font-medium transition flex items-center gap-1 ${mode === 'break' ? 'bg-green-500 text-white' : 'text-white/50 hover:text-white'}`}
+          className={`px-3 py-1 rounded text-sm font-medium transition flex items-center gap-1 ${mode === 'break' ? 'bg-green-500 text-white' : 'opacity-50 hover:opacity-100'}`}
         >
           <Coffee size={14} /> Break
         </button>
@@ -144,7 +144,7 @@ export default function PomodoroWidget({ blur = 0 }: PomodoroWidgetProps) {
           
           <button 
             onClick={resetTimer}
-            className="p-3 rounded-full bg-white/10 hover:bg-white/20 transition text-white/70 hover:text-white"
+            className="p-3 rounded-full bg-white/10 hover:bg-white/20 transition opacity-70 hover:opacity-100"
             title="Reset Timer"
           >
               <RotateCcw size={20} />

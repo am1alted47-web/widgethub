@@ -32,6 +32,7 @@ const INITIAL_STATE: AppState = {
     activeType: 'solid',
     imageValue: '',
     colorValue: '#1a1a1a', // Default dark bg
+    fontColorValue: '#ffffff', // Default white text
   },
   isEditing: false,
   maxWidgetsPerColumn: 3,
@@ -430,8 +431,10 @@ export default function Home() {
         className="h-screen w-full flex overflow-hidden transition-all duration-500 bg-cover bg-center relative"
         style={{ 
             backgroundImage: state.background.activeType === 'image' && state.background.imageValue ? `url(${state.background.imageValue})` : undefined,
-            backgroundColor: state.background.activeType === 'solid' ? state.background.colorValue : undefined
-        }}
+            backgroundColor: state.background.activeType === 'solid' ? state.background.colorValue : undefined,
+            '--widget-font-color': state.background.fontColorValue || '#ffffff',
+            color: 'var(--widget-font-color)'
+        } as React.CSSProperties}
       >
         {Object.values(state.columns).every(col => col.length === 0) && !state.isEditing && <GuideModal />}
 
@@ -462,6 +465,7 @@ export default function Home() {
                     onUpdateWidgetHeight={updateWidgetHeight}
                     onUpdateWidgetSettings={updateWidgetSettings}
                     onUpdateColumnWidth={updateColumnWidth}
+                    fontColor={state.background.fontColorValue}
                 />
                 <Column 
                     id="middle" 
@@ -474,6 +478,7 @@ export default function Home() {
                     onUpdateWidgetHeight={updateWidgetHeight}
                     onUpdateWidgetSettings={updateWidgetSettings}
                     onUpdateColumnWidth={updateColumnWidth}
+                    fontColor={state.background.fontColorValue}
                 />
                 <Column 
                     id="right" 
@@ -486,6 +491,7 @@ export default function Home() {
                     onUpdateWidgetHeight={updateWidgetHeight}
                     onUpdateWidgetSettings={updateWidgetSettings}
                     onUpdateColumnWidth={updateColumnWidth}
+                    fontColor={state.background.fontColorValue}
                 />
             </>
         )}
@@ -501,6 +507,7 @@ export default function Home() {
                      onRemove={() => {}} 
                      onUpdatePosition={() => {}} 
                      onUpdateSettings={() => {}}
+                     fontColor={state.background.fontColorValue}
                    /> 
                </div>
             ) : null}

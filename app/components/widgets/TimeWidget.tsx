@@ -16,7 +16,7 @@ export default function TimeWidget({ blur = 0 }: TimeWidgetProps) {
 
   return (
     <div 
-        className="flex flex-col items-center justify-center h-full w-full rounded-2xl text-white transition-colors duration-300"
+        className="flex flex-col items-center justify-center h-full w-full rounded-2xl transition-colors duration-300"
         style={{ 
             backdropFilter: `blur(${blur}px)`,
             backgroundColor: `rgba(0, 0, 0, 0)`

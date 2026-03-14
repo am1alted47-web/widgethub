@@ -16,9 +16,10 @@ interface ColumnProps {
   onUpdateWidgetHeight: (id: string, height: number) => void;
   onUpdateWidgetSettings: (id: string, settings: any) => void;
   onUpdateColumnWidth: (id: ColumnId, width: number) => void;
+  fontColor?: string;
 }
 
-export function Column({ id, widgets, isEditing, blur, width, onRemoveWidget, onUpdateWidgetPosition, onUpdateWidgetHeight, onUpdateWidgetSettings, onUpdateColumnWidth }: ColumnProps) {
+export function Column({ id, widgets, isEditing, blur, width, onRemoveWidget, onUpdateWidgetPosition, onUpdateWidgetHeight, onUpdateWidgetSettings, onUpdateColumnWidth, fontColor }: ColumnProps) {
   const { setNodeRef } = useDroppable({ id });
 
   // For single widget alignment
@@ -117,6 +118,7 @@ export function Column({ id, widgets, isEditing, blur, width, onRemoveWidget, on
             onRemove={onRemoveWidget}
             onUpdatePosition={onUpdateWidgetPosition}
             onUpdateSettings={onUpdateWidgetSettings}
+            fontColor={fontColor}
           />
         ))}
       </SortableContext>

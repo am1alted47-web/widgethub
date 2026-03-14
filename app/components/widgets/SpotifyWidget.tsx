@@ -405,12 +405,12 @@ export default function SpotifyWidget({ blur = 0, isEditing = false, isHidden = 
                     <Music className="w-12 h-12 text-green-500" />
                     <button 
                         onClick={login}
-                        className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-full transition-all transform hover:scale-105"
+                        className="bg-green-500 hover:bg-green-600 font-bold py-2 px-6 rounded-full transition-all transform hover:scale-105"
                     >
                         Connect Spotify
                     </button>
                     {isEditing && (
-                        <div className="text-xs text-white/50 w-full">
+                        <div className="text-xs opacity-50 w-full">
                             <label>Client ID</label>
                             <input 
                                 type="text" 
@@ -431,9 +431,9 @@ export default function SpotifyWidget({ blur = 0, isEditing = false, isHidden = 
         if (!currentTrack) {
             return (
                 <div className="flex flex-col items-center justify-center h-full p-4 text-center">
-                    <Music className="w-10 h-10 text-white/20 mb-2" />
-                    <p className="text-white/60 text-sm">Not playing anything</p>
-                    <button onClick={logout} className="text-xs text-white/30 mt-4 hover:text-white">Logout</button>
+                    <Music className="w-10 h-10 opacity-20 mb-2" />
+                    <p className="opacity-60 text-sm">Not playing anything</p>
+                    <button onClick={logout} className="text-xs opacity-30 mt-4 hover:opacity-100">Logout</button>
                 </div>
             );
         }
@@ -456,17 +456,17 @@ export default function SpotifyWidget({ blur = 0, isEditing = false, isHidden = 
                                 className={`w-16 h-16 rounded-lg  ${!paused ? 'animate-pulse-subtle' : ''}`} 
                             />
                             <div className="flex-1 min-w-0 flex flex-col justify-center h-16">
-                                <h3 className="font-bold text-white truncate text-base leading-tight">
+                                <h3 className="font-bold truncate text-base leading-tight">
                                     {currentTrack.name}
                                 </h3>
-                                <p className="text-white/70 text-sm truncate">{currentTrack.artist}</p>
+                                <p className="opacity-70 text-sm truncate">{currentTrack.artist}</p>
                             </div>
                         </div>
                     ) : null}
 
                     {/* Controls */}
                     <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/10">
-                        <button onClick={logout} className="text-white/30 hover:text-white/80 transition p-1">
+                        <button onClick={logout} className="opacity-30 hover:opacity-80 transition p-1">
                              <LogOut size={14} />
                         </button>
 
@@ -474,7 +474,7 @@ export default function SpotifyWidget({ blur = 0, isEditing = false, isHidden = 
                              {/* Only show controls if Premium */}
                              {isPremium ? (
                                 <>
-                                    <button onClick={handlePrev} className="text-white hover:text-green-400 transition transform hover:scale-110">
+                                    <button onClick={handlePrev} className="hover:text-green-400 transition transform hover:scale-110">
                                         <SkipBack size={20} />
                                     </button>
                                     <button 
@@ -483,12 +483,12 @@ export default function SpotifyWidget({ blur = 0, isEditing = false, isHidden = 
                                     >
                                         {paused ? <Play size={20} fill="currentColor" /> : <Pause size={20} fill="currentColor" />}
                                     </button>
-                                    <button onClick={handleNext} className="text-white hover:text-green-400 transition transform hover:scale-110">
+                                    <button onClick={handleNext} className="hover:text-green-400 transition transform hover:scale-110">
                                         <SkipForward size={20} />
                                     </button>
                                 </>
                              ) : (
-                                 <span className="text-xs text-white/50 tracking-wider font-medium px-2 py-1 bg-white/5 rounded">PREVIEW ONLY</span>
+                                 <span className="text-xs opacity-50 tracking-wider font-medium px-2 py-1 bg-white/5 rounded">PREVIEW ONLY</span>
                              )}
                         </div>
 
@@ -501,7 +501,7 @@ export default function SpotifyWidget({ blur = 0, isEditing = false, isHidden = 
 
     return (
         <div 
-            className="flex flex-col w-full h-full rounded-2xl text-white  overflow-hidden relative transition-colors duration-300"
+            className="flex flex-col w-full h-full rounded-2xl overflow-hidden relative transition-colors duration-300"
             style={{ 
                 backdropFilter: `blur(${blur}px)`,
                 backgroundColor: `rgba(0, 0, 0, 0)`

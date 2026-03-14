@@ -22,6 +22,7 @@ interface WidgetWrapperProps {
     onRemove: (id: string) => void;
     onUpdatePosition: (id: string, position: 'top' | 'middle' | 'bottom' | 'auto') => void;
     onUpdateSettings: (id: string, settings: any) => void;
+    fontColor?: string;
 }
 
 // Helper function to determine height based on total widgets in column
@@ -39,7 +40,8 @@ export function WidgetWrapper({
   blur,
   onRemove,
   onUpdatePosition,
-  onUpdateSettings
+  onUpdateSettings,
+  fontColor
 }: WidgetWrapperProps) {
   const {
     attributes,
@@ -75,7 +77,8 @@ export function WidgetWrapper({
       settings: widget.settings,
       onSettingsChange: (newSettings: any) => onUpdateSettings(widget.id, newSettings),
       blur,
-      isEditing // Pass isEditing to all widgets
+      isEditing, // Pass isEditing to all widgets
+      fontColor
   };
 
   const handleFontSizeChange = (e: React.ChangeEvent<HTMLInputElement>) => {

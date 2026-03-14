@@ -61,7 +61,7 @@ export default function TodoWidget({ blur = 0, settings, onSettingsChange }: Tod
 
   return (
     <div 
-        className="flex flex-col h-full w-full rounded-2xl p-4 text-white  overflow-hidden transition-colors duration-300"
+        className="flex flex-col h-full w-full rounded-2xl p-4 overflow-hidden transition-colors duration-300"
         style={{ 
             backdropFilter: `blur(${blur}px)`,
             backgroundColor: `rgba(0, 0, 0, 0)`
@@ -70,7 +70,7 @@ export default function TodoWidget({ blur = 0, settings, onSettingsChange }: Tod
       <h3 className="font-bold mb-3 text-lg">To-Do</h3>
       
       <div className="flex-1 overflow-y-auto mb-3 space-y-2 pr-1 custom-scrollbar">
-        {todos.length === 0 && <p className="text-white/30 text-xs text-center mt-4">No tasks yet</p>}
+        {todos.length === 0 && <p className="opacity-30 text-xs text-center mt-4">No tasks yet</p>}
         {todos.map(todo => (
           <div key={todo.id} className="group flex items-center gap-2 bg-white/5 p-2 rounded-lg hover:bg-white/10 transition">
             <button 
@@ -79,10 +79,10 @@ export default function TodoWidget({ blur = 0, settings, onSettingsChange }: Tod
             >
               {todo.completed && <Check size={12} className="text-black" />}
             </button>
-            <span className={`flex-1 text-sm truncate ${todo.completed ? 'line-through text-white/30' : ''}`}>{todo.text}</span>
+            <span className={`flex-1 text-sm truncate ${todo.completed ? 'line-through opacity-30' : ''}`}>{todo.text}</span>
             <button 
               onClick={() => removeTodo(todo.id)}
-              className="opacity-0 group-hover:opacity-100 text-white/50 hover:text-red-400 transition p-1"
+              className="opacity-0 group-hover:opacity-100 hover:text-red-400 transition p-1"
             >
               <Trash size={14} />
             </button>

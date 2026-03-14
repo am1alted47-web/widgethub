@@ -59,7 +59,7 @@ export default function YoutubeWidget({ blur = 0, isEditing = false, settings, o
 
   return (
     <div 
-        className={`flex flex-col w-full rounded-2xl text-white  overflow-hidden relative group transition-all duration-300 ${isCollapsed ? 'h-12' : 'h-full'}`}
+        className={`flex flex-col w-full rounded-2xl overflow-hidden relative group transition-all duration-300 ${isCollapsed ? 'h-12' : 'h-full'}`}
         style={{ 
             backdropFilter: `blur(${blur}px)`,
             backgroundColor: `rgba(0, 0, 0, 0)`
@@ -82,7 +82,7 @@ export default function YoutubeWidget({ blur = 0, isEditing = false, settings, o
               {/* <span className="font-bold text-sm truncate">
                   {embedId ? `YouTube Video` : 'YouTube Widget'}
               </span> */}
-              {embedId && <span className="ml-2 text-xs text-white/50 truncate max-w-[200px]">ID: {embedId}</span>}
+              {embedId && <span className="ml-2 text-xs opacity-50 truncate max-w-[200px]">ID: {embedId}</span>}
           </div>
       )}
 

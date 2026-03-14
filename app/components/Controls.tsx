@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Edit2, Check, Download, Upload, Plus, Image as ImageIcon, Maximize, Minimize, Zap, ZapOff, CircleEllipsis } from 'lucide-react';
 import { WidgetType, AppState } from '../types';
+import { getInverseColor } from '../utils/colors';
 
 interface ControlsProps {
   isEditing: boolean;
@@ -25,14 +26,21 @@ export function Controls({ isEditing, disableEdit, onToggleEdit, onAddWidget, on
   const [showControls, setShowControls] = useState(false);
   const [imageUrl, setImageUrl] = useState(background.imageValue);
   const [colorValue, setColorValue] = useState(background.colorValue);
+  const [fontColorValue, setFontColorValue] = useState(background.fontColorValue || '#ffffff');
   const [activeType, setActiveType] = useState<'solid' | 'image'>(background.activeType);
   const [isFullscreen, setIsFullscreen] = useState(false);
+
+  const fontColor = background.fontColorValue || '#ffffff';
+  const inverseColor = getInverseColor(fontColor);
+
+  const btnStyle = { backgroundColor: inverseColor, color: fontColor };
 
   // Sync local state when prop updates or modal opens
   useEffect(() => {
     if (showBgModal) {
         setImageUrl(background.imageValue);
         setColorValue(background.colorValue);
+        setFontColorValue(background.fontColorValue || '#ffffff');
         setActiveType(background.activeType);
     }
   }, [showBgModal, background]);
@@ -48,7 +56,7 @@ export function Controls({ isEditing, disableEdit, onToggleEdit, onAddWidget, on
 
   const handleBgSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onUpdateBackground({ activeType, imageValue: imageUrl, colorValue });
+    onUpdateBackground({ activeType, imageValue: imageUrl, colorValue, fontColorValue });
     setShowBgModal(false);
   };
 
@@ -83,15 +91,15 @@ export function Controls({ isEditing, disableEdit, onToggleEdit, onAddWidget, on
           <div className="flex gap-2 items-center animate-in slide-in-from-right-5 fade-in duration-300">
             
             {/* Settings */}
-            <div className="bg-black/80 backdrop-blur-md p-2 rounded-xl flex gap-2 border border-white/10">
-                <button onClick={() => setShowBgModal(true)} className="p-2 rounded-full hover:bg-white/10 text-white" title="Change Background">
+            <div className="backdrop-blur-md p-2 rounded-xl flex gap-2 border border-white/10" style={btnStyle}>
+                <button onClick={() => setShowBgModal(true)} className="p-2 rounded-full hover:opacity-70" title="Change Background">
                   <ImageIcon size={20} />
                 </button>
-                <label className="cursor-pointer p-2 rounded-full hover:bg-white/10 text-white" title="Import Config">
+                <label className="cursor-pointer p-2 rounded-full hover:opacity-70" title="Import Config">
                   <Upload size={20} />
                   <input type="file" onChange={onImport} className="hidden" accept=".json" />
                 </label>
-                <button onClick={onExport} className="p-2 rounded-full hover:bg-white/10 text-white" title="Export Config">
+                <button onClick={onExport} className="p-2 rounded-full hover:opacity-70" title="Export Config">
                   <Download size={20} />
                 </button>
             </div>
@@ -100,7 +108,8 @@ export function Controls({ isEditing, disableEdit, onToggleEdit, onAddWidget, on
             <div className="relative">
                 <button 
                   onClick={() => setShowAddMenu(!showAddMenu)} 
-                  className={`bg-black/80 backdrop-blur-md p-3 rounded-full hover:bg-white/10 text-white border border-white/10 transition-transform ${showAddMenu ? 'rotate-45' : ''}`}
+                  className={`backdrop-blur-md p-3 rounded-full hover:opacity-80 border border-white/10 transition-transform ${showAddMenu ? 'rotate-45' : ''}`}
+                  style={btnStyle}
                   title="Add Widget"
                 >
                   <Plus size={20} />
@@ -132,25 +141,28 @@ export function Controls({ isEditing, disableEdit, onToggleEdit, onAddWidget, on
               <button
                 onClick={onToggleEdit}
                 disabled={disableEdit}
-                className={`p-4 rounded-full shadow-lg transition-all transform hover:scale-105 ${disableEdit ? 'bg-gray-500 cursor-not-allowed opacity-50' : isEditing ? 'bg-green-500 hover:bg-green-600' : 'bg-white/10 hover:bg-white/20 backdrop-blur-md'}`}
+                className={`p-4 rounded-full shadow-lg transition-all transform hover:scale-105 ${disableEdit ? 'opacity-50' : 'hover:opacity-80 backdrop-blur-md'}`}
+                style={isEditing && !disableEdit ? { backgroundColor: '#22c55e', color: '#ffffff' } : disableEdit ? { backgroundColor: '#6b7280', color: fontColor } : btnStyle}
               >
-                {isEditing ? <Check className="text-white" size={16} /> : <Edit2 className="text-white" size={16} />}
+                {isEditing ? <Check size={16} /> : <Edit2 size={16} />}
               </button>
 
               <button
                 onClick={onToggleWakeLock}
-                className={`p-4 rounded-full shadow-lg transition-all transform hover:scale-105 ${wakeLock ? 'bg-yellow-500 hover:bg-yellow-600' : 'bg-white/10 hover:bg-white/20 backdrop-blur-md'}`}
+                className={`p-4 rounded-full shadow-lg transition-all transform hover:scale-105 ${wakeLock ? '' : 'hover:opacity-80 backdrop-blur-md'}`}
+                style={wakeLock ? { backgroundColor: '#eab308', color: '#000000' } : btnStyle}
                 title={wakeLock ? "Keep Screen Awake (On)" : "Keep Screen Awake (Off)"}
               >
-                {wakeLock ? <Zap className="text-black fill-black" size={16} /> : <ZapOff className="text-white" size={16} />}
+                {wakeLock ? <Zap className="fill-black" size={16} /> : <ZapOff size={16} />}
               </button>
 
               <button
                 onClick={onTogglePage}
-                className="p-4 rounded-full shadow-lg transition-all transform hover:scale-105 bg-white/10 hover:bg-white/20 backdrop-blur-md flex items-center justify-center min-w-[48px] min-h-[48px]"
+                className="p-4 rounded-full shadow-lg transition-all transform hover:scale-105 hover:opacity-80 backdrop-blur-md flex items-center justify-center min-w-[48px] min-h-[48px]"
+                style={btnStyle}
                 title={`Switch to Page ${activePage === 'page1' ? '2' : '1'}`}
               >
-                <span className="text-white text-sm font-bold leading-none">{activePage === 'page1' ? '1' : '2'}</span>
+                <span className="text-sm font-bold leading-none">{activePage === 'page1' ? '1' : '2'}</span>
               </button>
 
               <button
@@ -161,9 +173,10 @@ export function Controls({ isEditing, disableEdit, onToggleEdit, onAddWidget, on
                     document.exitFullscreen();
                   }
                 }}
-                className="p-4 rounded-full shadow-lg transition-all transform hover:scale-105 bg-white/10 hover:bg-white/20 backdrop-blur-md"
+                className="p-4 rounded-full shadow-lg transition-all transform hover:scale-105 hover:opacity-80 backdrop-blur-md"
+                style={btnStyle}
               >
-                {isFullscreen ? <Minimize className="text-white" size={16} /> : <Maximize className="text-white" size={16} />}
+                {isFullscreen ? <Minimize size={16} /> : <Maximize size={16} />}
               </button>
             </div>
           )}
@@ -173,8 +186,12 @@ export function Controls({ isEditing, disableEdit, onToggleEdit, onAddWidget, on
       <div className="fixed bottom-2 right-2 z-50">
         <div>
           {(
-            <button onClick={() => setShowControls(!showControls)} className="p-2 rounded-full shadow-sm transition-all transform hover:scale-105 bg-white/10 hover:bg-white/20 backdrop-blur-md">
-              <CircleEllipsis className="text-white" size={16} />
+            <button 
+              onClick={() => setShowControls(!showControls)} 
+              className="p-2 rounded-full shadow-sm transition-all transform hover:scale-105 hover:opacity-80 backdrop-blur-md"
+              style={btnStyle}
+            >
+              <CircleEllipsis size={16} />
             </button>
           )}
         </div>
@@ -234,6 +251,23 @@ export function Controls({ isEditing, disableEdit, onToggleEdit, onAddWidget, on
                           onChange={e => setImageUrl(e.target.value)}
                           className="w-full bg-black/50 border border-white/10 rounded-lg p-2.5 text-white text-sm focus:outline-none focus:border-white/30 placeholder:text-zinc-600"
                       />
+                  </div>
+                  
+                  <div className="mt-2 border-t border-white/10 pt-4">
+                      <label className="text-xs text-zinc-500 uppercase font-bold mb-1.5 block">Global Font Color</label>
+                      <div className="relative">
+                          <div 
+                            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border border-white/20 shadow-sm transition-colors"
+                            style={{ backgroundColor: isValidColor(fontColorValue) ? fontColorValue : 'transparent' }} 
+                          />
+                          <input 
+                              type="text" 
+                              placeholder="#ffffff" 
+                              value={fontColorValue} 
+                              onChange={e => setFontColorValue(e.target.value)}
+                              className="w-full bg-black/50 border border-white/10 rounded-lg py-2.5 pl-10 pr-3 text-white text-sm focus:outline-none focus:border-white/30 placeholder:text-zinc-600"
+                          />
+                      </div>
                   </div>
                </div>
 

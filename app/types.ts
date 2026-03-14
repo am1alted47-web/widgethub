@@ -21,6 +21,7 @@ export interface AppState {
         activeType: 'solid' | 'image';
         imageValue: string;
         colorValue: string;
+        fontColorValue?: string;
     };
     blur?: number; // 0-100
     isEditing: boolean;

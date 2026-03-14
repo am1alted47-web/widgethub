@@ -111,7 +111,7 @@ export default function WeatherWidget({ blur = 0, settings, onSettingsChange }: 
           case 'Clear': return <Sun className="text-yellow-400" size={iconSize} />;
           case 'Cloudy': return <Cloud className="text-gray-400" size={iconSize} />;
           case 'Rain': return <CloudRain className="text-blue-400" size={iconSize} />;
-          case 'Snow': return <CloudSnow className="text-white" size={iconSize} />;
+          case 'Snow': return <CloudSnow className="opacity-100" size={iconSize} />;
           default: return <Sun className="text-yellow-400" size={iconSize} />;
       }
   };
@@ -142,7 +142,7 @@ export default function WeatherWidget({ blur = 0, settings, onSettingsChange }: 
   return (
     <div 
         ref={containerRef}
-        className="flex flex-col h-full w-full rounded-2xl p-4 text-white  overflow-hidden relative transition-colors duration-300"
+        className="flex flex-col h-full w-full rounded-2xl p-4 overflow-hidden relative transition-colors duration-300"
         style={{ 
             backdropFilter: `blur(${blur}px)`,
             backgroundColor: `rgba(0, 0, 0, 0)`
@@ -161,7 +161,7 @@ export default function WeatherWidget({ blur = 0, settings, onSettingsChange }: 
                     />
                     <div className="flex gap-1 justify-center">
                         <button type="submit" className="bg-white/20 p-1 px-2 rounded hover:bg-white/30 text-[10px] font-bold">OK</button>
-                        <button type="button" onClick={() => setIsEditingCity(false)} className="text-white/50 text-[10px] hover:text-white px-2">Cancel</button>
+                        <button type="button" onClick={() => setIsEditingCity(false)} className="opacity-50 text-[10px] hover:opacity-100 px-2">Cancel</button>
                     </div>
                 </form>
             </div>
@@ -169,14 +169,14 @@ export default function WeatherWidget({ blur = 0, settings, onSettingsChange }: 
            <>
               {loading ? (
                   <div className="flex-1 flex items-center justify-center">
-                      <Loader2 className="animate-spin text-white/50" size={24} />
+                      <Loader2 className="animate-spin opacity-50" size={24} />
                   </div>
               ) : weather ? (
                 <div className={`flex ${isInline ? 'flex-row items-center justify-between px-2' : 'flex-col items-center justify-between'} h-full w-full`}>
                     
                     {/* Header / City */}
                     <div className="flex items-center gap-1 cursor-pointer hover:bg-white/10 px-2 py-0.5 rounded transition" onClick={() => { setIsEditingCity(true); setInputCity(city); }}>
-                        {!isInline && <MapPin size={14} className="text-white/70" />}
+                        {!isInline && <MapPin size={14} className="opacity-70" />}
                         <span className={`font-medium ${isInline ? 'text-sm' : 'text-base'}`}>{weather.city}</span>
                     </div>
                     
@@ -192,13 +192,13 @@ export default function WeatherWidget({ blur = 0, settings, onSettingsChange }: 
 
                     {/* Footer / Condition (Hide if inline/very small) */}
                     {!isKindaSmall && (
-                        <div className="text-white/70 font-medium text-s">
+                        <div className="opacity-70 font-medium text-s">
                             {weather.condition}
                         </div>
                     )}
                 </div>
               ) : (
-                <div className="flex-1 flex flex-col items-center justify-center text-white/50 cursor-pointer text-center p-2" onClick={() => setIsEditingCity(true)}>
+                <div className="flex-1 flex flex-col items-center justify-center opacity-50 cursor-pointer text-center p-2" onClick={() => setIsEditingCity(true)}>
                     <span className="text-xs">Tap to set city</span>
                 </div>
               )}

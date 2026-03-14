@@ -7,14 +7,17 @@ interface WaterLogEntry {
     timeDisplay: string; // HH:MM format
 }
 
+import { getWaterColors, getInverseColor, getGlassOutlineColor } from '../../utils/colors';
+
 interface WaterLogWidgetProps {
     settings?: any;
     onSettingsChange: (settings: any) => void;
     blur?: number;
     isEditing: boolean;
+    fontColor?: string;
 }
 
-export default function WaterLogWidget({ settings, onSettingsChange, isEditing, blur=0 }: WaterLogWidgetProps) {
+export default function WaterLogWidget({ settings, onSettingsChange, isEditing, blur=0, fontColor }: WaterLogWidgetProps) {
     const containerRef = useRef<HTMLDivElement>(null);
     const [measuredMode, setMeasuredMode] = useState<'vertical' | 'side' | 'horizontal'>('vertical');
     
@@ -34,6 +37,8 @@ export default function WaterLogWidget({ settings, onSettingsChange, isEditing, 
     const layoutMode = layoutPreference === 'auto' ? measuredMode : (
         layoutPreference === 'horizontal' ? 'horizontal' : 'vertical' 
     );
+
+    const waterColors = getWaterColors(fontColor);
 
     // Resize Observer for Layout
     useEffect(() => {
@@ -144,16 +149,17 @@ export default function WaterLogWidget({ settings, onSettingsChange, isEditing, 
         <div className={`flex gap-2 ${layoutMode === 'horizontal' ? 'flex-col justify-center' : (layoutMode === 'side' ? 'flex-col justify-center' : 'justify-center w-full mt-2')}`}>
              <button 
                 onClick={() => addWater(250)}
-                className={`flex flex-col items-center justify-center bg-blue-500/10 hover:bg-blue-500/30 border border-blue-500/20 hover:border-blue-500/50 rounded-xl group transition-all
+                className={`flex flex-col items-center justify-center rounded-xl group transition-all
                     ${layoutMode === 'horizontal' ? 'w-8 h-8' : (layoutMode === 'side' ? 'w-10 h-10' : 'w-12 h-12')}
                 `}
+                style={{ backgroundColor: fontColor ? getInverseColor(fontColor) : 'rgba(255, 255, 255, 0.1)', borderColor: 'rgba(128,128,128,0.2)', borderWidth: 1 }}
                 title="Add 250mL"
             >
                 <div className="relative">
-                    <GlassWater size={layoutMode === 'horizontal' ? 14 : 18} className="text-blue-300 group-hover:text-blue-200" />
+                    <GlassWater size={layoutMode === 'horizontal' ? 14 : 18} style={{ color: fontColor || `rgb(${waterColors.blueLight})` }} />
                      {layoutMode !== 'horizontal' && (
-                        <div className="absolute -top-1 -right-1.5 bg-blue-600 rounded-full w-3 h-3 flex items-center justify-center">
-                            <Plus size={8} className="text-white" />
+                        <div className="absolute -top-1 -right-1.5 rounded-full w-3 h-3 flex items-center justify-center" style={{ backgroundColor: fontColor || `rgb(${waterColors.blueDark})` }}>
+                            <Plus size={8} style={{ color: fontColor ? getInverseColor(fontColor) : '#ffffff', opacity: 1 }} />
                         </div>
                      )}
                 </div>
@@ -161,16 +167,17 @@ export default function WaterLogWidget({ settings, onSettingsChange, isEditing, 
 
             <button 
                 onClick={handleCustomClick}
-                className={`flex flex-col items-center justify-center bg-cyan-500/10 hover:bg-cyan-500/30 border border-cyan-500/20 hover:border-cyan-500/50 rounded-xl group transition-all
+                className={`flex flex-col items-center justify-center rounded-xl group transition-all
                    ${layoutMode === 'horizontal' ? 'w-8 h-8' : (layoutMode === 'side' ? 'w-10 h-10' : 'w-12 h-12')}
                 `}
+                style={{ backgroundColor: fontColor ? getInverseColor(fontColor) : 'rgba(255, 255, 255, 0.1)', borderColor: 'rgba(128,128,128,0.2)', borderWidth: 1 }}
                 title="Add Custom"
             >
                 <div className="relative">
-                    <Droplet size={layoutMode === 'horizontal' ? 14 : 18} className="text-cyan-300 group-hover:text-cyan-200" />
+                    <Droplet size={layoutMode === 'horizontal' ? 14 : 18} style={{ color: fontColor || `rgb(${waterColors.cyanLight})` }} />
                     {layoutMode !== 'horizontal' && (
-                         <div className="absolute -top-1 -right-1.5 bg-cyan-600 rounded-full w-3 h-3 flex items-center justify-center">
-                            <Plus size={8} className="text-white" />
+                         <div className="absolute -top-1 -right-1.5 rounded-full w-3 h-3 flex items-center justify-center" style={{ backgroundColor: fontColor || `rgb(${waterColors.cyanDark})` }}>
+                            <Plus size={8} style={{ color: fontColor ? getInverseColor(fontColor) : '#ffffff', opacity: 1 }} />
                          </div>
                     )}
                 </div>
@@ -183,8 +190,8 @@ export default function WaterLogWidget({ settings, onSettingsChange, isEditing, 
             ${layoutMode === 'horizontal' ? 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ' : ''}
             ${layoutMode === 'vertical' ? 'mb-2' : ''}
         `}>
-            <span className="text-blue-400 font-bold text-xs">{current}</span>
-            <span className="text-white/40 text-[10px]">/</span>
+            <span className="font-bold text-xs" style={{ color: `rgb(${waterColors.blueLight})` }}>{current}</span>
+            <span className="opacity-40 text-[10px]">/</span>
             {isEditing ? (
                     <div className="flex items-center gap-1">
                     <input 
@@ -193,12 +200,12 @@ export default function WaterLogWidget({ settings, onSettingsChange, isEditing, 
                         onChange={handleGoalChange}
                         onBlur={saveGoal}
                         onKeyDown={(e) => e.key === 'Enter' && saveGoal()}
-                        className="w-10 bg-white/10 border border-white/20 rounded px-1 text-white text-[10px] text-center focus:outline-none focus:border-blue-500"
+                        className="w-10 bg-white/10 border border-white/20 rounded px-1 text-[10px] text-center focus:outline-none focus:border-blue-500"
                     />
-                    <span className="text-[9px] text-white/50">mL</span>
+                    <span className="text-[9px] opacity-50">mL</span>
                     </div>
             ) : (
-                <span className="text-white/70 text-[11px]">{goal} mL</span>
+                <span className="opacity-70 text-[11px]">{goal} mL</span>
             )}
         </div>
     );
@@ -210,7 +217,7 @@ export default function WaterLogWidget({ settings, onSettingsChange, isEditing, 
             {isEditing && (
                 <button 
                     onClick={toggleLayoutPreference}
-                    className="absolute top-2 left-2 z-[40] p-1.5 bg-black/40 hover:bg-black/60 text-white/70 hover:text-white rounded-lg border border-white/10 transition-colors"
+                    className="absolute top-2 left-2 z-[40] p-1.5 bg-black/40 hover:bg-black/60 opacity-70 hover:opacity-100 rounded-lg border border-white/10 transition-colors"
                     title={`Layout: ${layoutPreference.charAt(0).toUpperCase() + layoutPreference.slice(1)}`}
                 >
                     {layoutPreference === 'vertical' ? <Smartphone size={12} /> : 
@@ -223,13 +230,13 @@ export default function WaterLogWidget({ settings, onSettingsChange, isEditing, 
             {showCustomInput && (
                 <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={() => setShowCustomInput(false)}>
                     <div className="bg-zinc-900 border border-white/20 rounded-xl p-4 flex flex-col gap-3 shadow-2xl animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-                        <h4 className="text-white text-sm font-semibold text-center">Add Water Drank</h4>
+                        <h4 className="text-sm font-semibold text-center">Add Water Drank</h4>
                         <div className="flex gap-2">
                              <input 
                                 type="number" 
                                 autoFocus
                                 placeholder="Amt (mL)"
-                                className="w-24 bg-white/10 border border-white/10 rounded-lg p-2 text-white text-sm outline-none text-center focus:border-blue-500"
+                                className="w-24 bg-white/10 border border-white/10 rounded-lg p-2 text-sm outline-none text-center focus:border-blue-500"
                                 value={customAmount}
                                 onChange={(e) => setCustomAmount(e.target.value)}
                                 onKeyDown={(e) => {
@@ -264,13 +271,13 @@ export default function WaterLogWidget({ settings, onSettingsChange, isEditing, 
                      {/* Horizontal Bar Cup */}
                      <div className="flex-1 h-12 relative">
                          {/* Bar Container */}
-                         <div className="relative w-full h-full border-2 border-white/20 rounded-xl overflow-hidden bg-white/5">
+                         <div className="relative w-full h-full border-2 rounded-xl overflow-hidden bg-white/5" style={{ borderColor: getGlassOutlineColor(fontColor) }}>
                             <div 
-                                className="absolute top-0 left-0 h-full bg-blue-500/50 transition-all duration-700 ease-in-out"
-                                style={{ width: `${fillPercentage}%` }}
+                                className="absolute top-0 left-0 h-full transition-all duration-700 ease-in-out"
+                                style={{ width: `${fillPercentage}%`, backgroundColor: `rgb(${waterColors.blueBase}/0.5)` }}
                             >
-                                <div className="absolute top-0 right-0 h-full w-[2px] bg-blue-400 shadow-[0_0_10px_rgba(59,130,246,0.8)]"></div>
-                                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-blue-400/20 to-blue-600/60"></div>
+                                <div className="absolute top-0 right-0 h-full w-[2px]" style={{ backgroundColor: `rgb(${waterColors.blueLight})`, boxShadow: `0 0 10px rgb(${waterColors.blueBase}/0.8)` }}></div>
+                                <div className="absolute top-0 left-0 w-full h-full" style={{ background: `linear-gradient(to right, rgb(${waterColors.blueLight}/0.2), rgb(${waterColors.blueDark}/0.6))` }}></div>
                             </div>
                             
                              {/* History Markers */}
@@ -298,7 +305,7 @@ export default function WaterLogWidget({ settings, onSettingsChange, isEditing, 
                              return (
                                 <div 
                                     key={idx}
-                                    className={`absolute text-[9px] text-white/70 whitespace-nowrap transform -translate-x-1/2 flex flex-col items-center ${isTop ? '-top-4' : '-bottom-4'}`}
+                                    className={`absolute text-[9px] opacity-70 whitespace-nowrap transform -translate-x-1/2 flex flex-col items-center ${isTop ? '-top-4' : '-bottom-4'}`}
                                     style={{ left: `${pct}%` }}
                                 >
                                     <span>{entry.timeDisplay}</span>
@@ -322,16 +329,16 @@ export default function WaterLogWidget({ settings, onSettingsChange, isEditing, 
                     
                     {/* Cup container */}
                     <div className={`relative flex justify-center items-end ${layoutMode === 'side' ? 'h-[90%]' : 'w-full flex-1'}`}>
-                        <div className={`relative border-b-4 border-l-4 border-r-4 border-white/20 rounded-b-2xl overflow-hidden bg-white/5 backdrop-blur-sm transition-all duration-300
+                        <div className={`relative border-b-4 border-l-4 border-r-4 rounded-b-2xl overflow-hidden bg-white/5 backdrop-blur-sm transition-all duration-300
                             ${layoutMode === 'side' ? 'w-20 h-full' : 'w-24 h-full'}
-                        `}>
+                        `} style={{ borderColor: getGlassOutlineColor(fontColor) }}>
                              {/* Water */}
                             <div 
-                                className="absolute bottom-0 left-0 w-full bg-blue-500/50 transition-all duration-700 ease-in-out"
-                                style={{ height: `${fillPercentage}%` }}
+                                className="absolute bottom-0 left-0 w-full transition-all duration-700 ease-in-out"
+                                style={{ height: `${fillPercentage}%`, backgroundColor: `rgb(${waterColors.blueBase}/0.5)` }}
                             >   
-                                <div className="absolute top-0 left-0 w-full h-[2px] bg-blue-400 shadow-[0_0_10px_rgba(59,130,246,0.8)]"></div>
-                                <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-b from-blue-400/20 to-blue-600/60"></div>
+                                <div className="absolute top-0 left-0 w-full h-[2px]" style={{ backgroundColor: `rgb(${waterColors.blueLight})`, boxShadow: `0 0 10px rgb(${waterColors.blueBase}/0.8)` }}></div>
+                                <div className="absolute top-0 left-0 w-full h-full" style={{ background: `linear-gradient(to bottom, rgb(${waterColors.blueLight}/0.2), rgb(${waterColors.blueDark}/0.6))` }}></div>
                             </div>
                             
                             {/* History Lines */}
@@ -357,7 +364,7 @@ export default function WaterLogWidget({ settings, onSettingsChange, isEditing, 
                              return (
                                 <div 
                                     key={idx}
-                                    className={`absolute text-[7px] text-white/60 whitespace-nowrap transition-all duration-500`}
+                                    className={`absolute text-[7px] opacity-60 whitespace-nowrap transition-all duration-500`}
                                     style={{ 
                                         bottom: `${pct}%`, 
                                         [isLeft ? 'right' : 'left']: '50%',
