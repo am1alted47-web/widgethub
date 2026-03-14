@@ -76,8 +76,16 @@ export function WidgetWrapper({
     transform: `scale(${fontSizeFactor})`,
     transformOrigin: 'top left',
     ...(enableTextBorder ? {
-        WebkitTextStroke: '0.5px var(--widget-text-border-color)',
-        // textShadow: '0 0 1.5px var(--widget-text-border-color)'
+        textShadow: `
+          -0.17px -0.17px 0 var(--widget-text-border-color),
+           0.17px -0.17px 0 var(--widget-text-border-color),
+          -0.17px  0.17px 0 var(--widget-text-border-color),
+           0.17px  0.17px 0 var(--widget-text-border-color),
+           0px    -0.17px 0 var(--widget-text-border-color),
+           0px     0.17px 0 var(--widget-text-border-color),
+          -0.17px  0px    0 var(--widget-text-border-color),
+           0.17px  0px    0 var(--widget-text-border-color)
+        `
     } : {})
   };
 
