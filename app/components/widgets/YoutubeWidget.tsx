@@ -98,7 +98,7 @@ export default function YoutubeWidget({ blur = 0, isEditing = false, settings, o
                 onChange={(e) => setUrl(e.target.value)}
                 className="w-full bg-white/10 rounded px-3 py-2 text-sm focus:outline-none"
                 />
-                <button type="submit" className="bg-red-600 px-3 py-2 rounded text-sm font-bold">Load</button>
+                <button type="submit" className="border-[2px] border-red-600 bg-transparent text-red-600 hover:bg-red-600/10 px-3 py-2 rounded text-sm font-bold transition-colors">Load</button>
             </form>
             </div>
         ) : (

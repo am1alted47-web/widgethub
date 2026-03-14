@@ -3,7 +3,7 @@
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { Widget } from '../types';
-import { GripVertical, X, Settings } from 'lucide-react';
+import { GripVertical, X, Settings, Square, CheckSquare } from 'lucide-react';
 import TimeWidget from './widgets/TimeWidget';
 import DateWidget from './widgets/DateWidget';
 import TodoWidget from './widgets/TodoWidget';
@@ -61,15 +61,24 @@ export function WidgetWrapper({
 
   // Font scaling factor (default to 1)
   const fontSizeFactor = widget.settings?.fontSizeFactor || 1;
+  const enableTextBorder = widget.settings?.enableTextBorder || false;
+
+  const toggleTextBorder = () => {
+      onUpdateSettings(widget.id, { enableTextBorder: !enableTextBorder });
+  };
 
   // Firefox-compatible scaling:
   // scale() zooms the content
   // width/height compensation ensures the container flows correctly within the parent
-  const contentStyle = {
+  const contentStyle: React.CSSProperties = {
     width: `calc(100% / ${fontSizeFactor})`,
     height: `calc(100% / ${fontSizeFactor})`,
     transform: `scale(${fontSizeFactor})`,
     transformOrigin: 'top left',
+    ...(enableTextBorder ? {
+        WebkitTextStroke: '0.5px var(--widget-text-border-color)',
+        // textShadow: '0 0 1.5px var(--widget-text-border-color)'
+    } : {})
   };
 
   // Common props for widgets
@@ -122,6 +131,9 @@ export function WidgetWrapper({
         {isEditing && (
           <div className="absolute top-2 right-2 flex flex-col items-end gap-2 z-20 opacity-100 transition-opacity">
              <div className="flex gap-2">
+                <button onClick={toggleTextBorder} className="p-1 bg-black/50 rounded-md text-white hover:bg-white/20 transition-colors" title="Toggle Text Border">
+                    {enableTextBorder ? <CheckSquare size={16} className="text-blue-400" /> : <Square size={16} className="opacity-50" />}
+                </button>
                 <div {...listeners} className="p-1 bg-black/50 rounded-md cursor-grab active:cursor-grabbing text-white touch-none">
                     <GripVertical size={16} />
                 </div>

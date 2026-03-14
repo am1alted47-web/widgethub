@@ -22,6 +22,7 @@ export interface AppState {
         imageValue: string;
         colorValue: string;
         fontColorValue?: string;
+        textBorderColorValue?: string;
     };
     blur?: number; // 0-100
     isEditing: boolean;

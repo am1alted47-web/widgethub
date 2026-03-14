@@ -433,6 +433,7 @@ export default function Home() {
             backgroundImage: state.background.activeType === 'image' && state.background.imageValue ? `url(${state.background.imageValue})` : undefined,
             backgroundColor: state.background.activeType === 'solid' ? state.background.colorValue : undefined,
             '--widget-font-color': state.background.fontColorValue || '#ffffff',
+            '--widget-text-border-color': state.background.textBorderColorValue || 'transparent',
             color: 'var(--widget-font-color)'
         } as React.CSSProperties}
       >

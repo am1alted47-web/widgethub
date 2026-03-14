@@ -17,11 +17,35 @@ export function getLuminance(hex: string): number {
     return 0.2126 * sRGB[0] + 0.7152 * sRGB[1] + 0.0722 * sRGB[2];
 }
 
+export function adjustColorBrightness(hex: string, amount: number): string {
+    let usePound = false;
+    if (hex[0] == "#") {
+        hex = hex.slice(1);
+        usePound = true;
+    }
+    if (hex.length === 3) {
+        hex = hex.split('').map(c => c + c).join('');
+    }
+    let R = parseInt(hex.substring(0, 2), 16);
+    let G = parseInt(hex.substring(2, 4), 16);
+    let B = parseInt(hex.substring(4, 6), 16);
+
+    R = Math.max(0, Math.min(255, R + amount));
+    G = Math.max(0, Math.min(255, G + amount));
+    B = Math.max(0, Math.min(255, B + amount));
+
+    let RR = ((R.toString(16).length == 1) ? "0" + R.toString(16) : R.toString(16));
+    let GG = ((G.toString(16).length == 1) ? "0" + G.toString(16) : G.toString(16));
+    let BB = ((B.toString(16).length == 1) ? "0" + B.toString(16) : B.toString(16));
+
+    return (usePound ? "#" : "") + RR + GG + BB;
+}
+
 export function getInverseColor(hex?: string): string {
     if (!hex || !hex.startsWith('#')) return '#ffffff';
     const lum = getLuminance(hex);
-    // If background is bright, use black icon. If dark, use white icon.
-    return lum > 0.5 ? '#000000' : '#ffffff';
+    // If background is bright, darken slightly. If dark, lighten slightly.
+    return lum > 0.5 ? adjustColorBrightness(hex, -100) : adjustColorBrightness(hex, 100);
 }
 
 export function getGlassOutlineColor(hex?: string): string {

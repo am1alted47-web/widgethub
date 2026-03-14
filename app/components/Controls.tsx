@@ -27,6 +27,7 @@ export function Controls({ isEditing, disableEdit, onToggleEdit, onAddWidget, on
   const [imageUrl, setImageUrl] = useState(background.imageValue);
   const [colorValue, setColorValue] = useState(background.colorValue);
   const [fontColorValue, setFontColorValue] = useState(background.fontColorValue || '#ffffff');
+  const [textBorderColorValue, setTextBorderColorValue] = useState(background.textBorderColorValue || '#000000');
   const [activeType, setActiveType] = useState<'solid' | 'image'>(background.activeType);
   const [isFullscreen, setIsFullscreen] = useState(false);
 
@@ -41,6 +42,7 @@ export function Controls({ isEditing, disableEdit, onToggleEdit, onAddWidget, on
         setImageUrl(background.imageValue);
         setColorValue(background.colorValue);
         setFontColorValue(background.fontColorValue || '#ffffff');
+        setTextBorderColorValue(background.textBorderColorValue || '#000000');
         setActiveType(background.activeType);
     }
   }, [showBgModal, background]);
@@ -56,7 +58,7 @@ export function Controls({ isEditing, disableEdit, onToggleEdit, onAddWidget, on
 
   const handleBgSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    onUpdateBackground({ activeType, imageValue: imageUrl, colorValue, fontColorValue });
+    onUpdateBackground({ activeType, imageValue: imageUrl, colorValue, fontColorValue, textBorderColorValue });
     setShowBgModal(false);
   };
 
@@ -253,20 +255,38 @@ export function Controls({ isEditing, disableEdit, onToggleEdit, onAddWidget, on
                       />
                   </div>
                   
-                  <div className="mt-2 border-t border-white/10 pt-4">
-                      <label className="text-xs text-zinc-500 uppercase font-bold mb-1.5 block">Global Font Color</label>
-                      <div className="relative">
-                          <div 
-                            className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border border-white/20 shadow-sm transition-colors"
-                            style={{ backgroundColor: isValidColor(fontColorValue) ? fontColorValue : 'transparent' }} 
-                          />
-                          <input 
-                              type="text" 
-                              placeholder="#ffffff" 
-                              value={fontColorValue} 
-                              onChange={e => setFontColorValue(e.target.value)}
-                              className="w-full bg-black/50 border border-white/10 rounded-lg py-2.5 pl-10 pr-3 text-white text-sm focus:outline-none focus:border-white/30 placeholder:text-zinc-600"
-                          />
+                  <div className="mt-2 border-t border-white/10 pt-4 flex gap-4">
+                      <div className="flex-1">
+                          <label className="text-xs text-zinc-500 uppercase font-bold mb-1.5 block">Global Font Color</label>
+                          <div className="relative">
+                              <div 
+                                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border border-white/20 shadow-sm transition-colors"
+                                style={{ backgroundColor: isValidColor(fontColorValue) ? fontColorValue : 'transparent' }} 
+                              />
+                              <input 
+                                  type="text" 
+                                  placeholder="#ffffff" 
+                                  value={fontColorValue} 
+                                  onChange={e => setFontColorValue(e.target.value)}
+                                  className="w-full bg-black/50 border border-white/10 rounded-lg py-2.5 pl-10 pr-3 text-white text-sm focus:outline-none focus:border-white/30 placeholder:text-zinc-600"
+                              />
+                          </div>
+                      </div>
+                      <div className="flex-1">
+                          <label className="text-xs text-zinc-500 uppercase font-bold mb-1.5 block">Text Border</label>
+                          <div className="relative">
+                              <div 
+                                className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 rounded-full border border-white/20 shadow-sm transition-colors"
+                                style={{ backgroundColor: isValidColor(textBorderColorValue) ? textBorderColorValue : 'transparent' }} 
+                              />
+                              <input 
+                                  type="text" 
+                                  placeholder="#000000" 
+                                  value={textBorderColorValue} 
+                                  onChange={e => setTextBorderColorValue(e.target.value)}
+                                  className="w-full bg-black/50 border border-white/10 rounded-lg py-2.5 pl-10 pr-3 text-white text-sm focus:outline-none focus:border-white/30 placeholder:text-zinc-600"
+                              />
+                          </div>
                       </div>
                   </div>
                </div>
