@@ -156,11 +156,11 @@ export function WidgetWrapper({
                 <input 
                     type="range" 
                     min="0.5" 
-                    max="3.0" 
+                    max="5.0" 
                     step="0.1" 
                     value={fontSizeFactor}
                     onChange={handleFontSizeChange}
-                    className="w-20 accent-blue-500 h-1"
+                    className="w-25 accent-blue-500 h-1"
                 />
                 <span className="text-[10px] text-white">{fontSizeFactor.toFixed(1)}x</span>
              </div>
